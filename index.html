@@ -36,6 +36,13 @@
   <!-- Robots -->
   <meta name="robots" content="index, follow">
 
+  <!-- Preconnect: hero images served from Unsplash CDN -->
+  <link rel="preconnect" href="https://images.unsplash.com">
+  <link rel="dns-prefetch" href="https://images.unsplash.com">
+
+  <!-- Preload first hero slide (LCP image) -->
+  <link rel="preload" as="image" href="https://images.unsplash.com/photo-1613457231357-a5db3bc5bd81?auto=format&fit=crop&w=1920&q=80" fetchpriority="high">
+
   <!-- Display font (Playfair Display — headlines only, ~22KB) -->
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -126,7 +133,7 @@
 
       <!-- Logo -->
       <a href="#hero" class="nav-logo" aria-label="Augere Global, back to top">
-        <img src="augere-global-Photoroom-transparent.png" alt="Augere Global" class="nav-logo-img">
+        <img src="augere-global-Photoroom-transparent.png" alt="Augere Global" class="nav-logo-img" width="1600" height="696" fetchpriority="high">
       </a>
 
       <!-- Desktop links -->
@@ -449,7 +456,7 @@
       <div class="footer-top">
         <div class="footer-brand">
           <a href="#hero" class="footer-logo-link" aria-label="Augere Global, back to top">
-            <img src="augere-global-Photoroom-transparent.png" alt="Augere Global" class="footer-logo-img">
+            <img src="augere-global-Photoroom-transparent.png" alt="Augere Global" class="footer-logo-img" width="1600" height="696" loading="lazy">
           </a>
           <p class="footer-motto">Doing In Excellence</p>
           <address class="footer-contact" style="font-style:normal; margin-top:0.625rem;">
