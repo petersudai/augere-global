@@ -40,8 +40,9 @@
   <link rel="preconnect" href="https://images.unsplash.com">
   <link rel="dns-prefetch" href="https://images.unsplash.com">
 
-  <!-- Preload first hero slide (LCP image) -->
-  <link rel="preload" as="image" href="https://images.unsplash.com/photo-1613457231357-a5db3bc5bd81?auto=format&fit=crop&w=1920&q=80" fetchpriority="high">
+  <!-- Preload first hero slide (LCP image) — sized per viewport -->
+  <link rel="preload" as="image" href="https://images.unsplash.com/photo-1613457231357-a5db3bc5bd81?auto=format&fit=crop&w=800&q=75" media="(max-width: 767px)">
+  <link rel="preload" as="image" href="https://images.unsplash.com/photo-1613457231357-a5db3bc5bd81?auto=format&fit=crop&w=1920&q=80" media="(min-width: 768px)">
 
   <!-- Display font (Playfair Display — headlines only, ~22KB) -->
   <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -183,12 +184,9 @@
 
       <!-- Image slideshow (decorative, behind overlay) -->
       <div class="hero-slides" aria-hidden="true">
-        <div class="hero-slide slide-1"
-             style="background-image:url('https://images.unsplash.com/photo-1613457231357-a5db3bc5bd81?auto=format&fit=crop&w=1920&q=80')"></div>
-        <div class="hero-slide slide-2"
-             style="background-image:url('https://images.unsplash.com/photo-1769144256207-bc4bb75b29db?auto=format&fit=crop&w=1920&q=80')"></div>
-        <div class="hero-slide slide-3"
-             style="background-image:url('https://images.unsplash.com/photo-1605000797499-95a51c5269ae?fm=jpg&q=80&w=1920&auto=format&fit=crop')"></div>
+        <div class="hero-slide slide-1"></div>
+        <div class="hero-slide slide-2"></div>
+        <div class="hero-slide slide-3"></div>
       </div>
 
       <div class="hero-overlay"  aria-hidden="true"></div>
