@@ -1,0 +1,158 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="UTF-8">
+  <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    html, body { width: 1200px; height: 630px; overflow: hidden; background: #3A0C18; }
+    canvas { display: block; }
+  </style>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,700;1,700&display=swap">
+</head>
+<body>
+<canvas id="c" width="1200" height="630"></canvas>
+<script>
+const POLYGONS = [
+  [[58,2],[63,9],[58,16],[53,9]],
+  [[52,18],[57,25],[52,32],[47,25]],[[64,18],[69,25],[64,32],[59,25]],
+  [[46,34],[51,41],[46,48],[41,41]],[[58,34],[63,41],[58,48],[53,41]],[[70,34],[75,41],[70,48],[65,41]],
+  [[40,50],[45,57],[40,64],[35,57]],[[52,50],[57,57],[52,64],[47,57]],[[64,50],[69,57],[64,64],[59,57]],[[76,50],[81,57],[76,64],[71,57]],
+  [[34,66],[39,73],[34,80],[29,73]],[[46,66],[51,73],[46,80],[41,73]],[[58,66],[63,73],[58,80],[53,73]],[[70,66],[75,73],[70,80],[65,73]],[[82,66],[87,73],[82,80],[77,73]],
+  [[28,82],[33,89],[28,96],[23,89]],[[40,82],[45,89],[40,96],[35,89]],[[52,82],[57,89],[52,96],[47,89]],[[64,82],[69,89],[64,96],[59,89]],[[76,82],[81,89],[76,96],[71,89]],[[88,82],[93,89],[88,96],[83,89]],
+  [[22,98],[27,105],[22,112],[17,105]],[[34,98],[39,105],[34,112],[29,105]],[[46,98],[51,105],[46,112],[41,105]],[[58,98],[63,105],[58,112],[53,105]],[[70,98],[75,105],[70,112],[65,105]],[[82,98],[87,105],[82,112],[77,105]],[[94,98],[99,105],[94,112],[89,105]],
+];
+
+const ROW_COLORS = ['#6B1828','#7E2338','#8B2946','#9B3651','#A94D64','#BA6175','#CB7888'];
+const ROW_ENDS   = [1, 3, 6, 10, 15, 21, 28];
+
+function drawMark(ctx, cx, cy, scale, baseOpacity) {
+  const SVG_CX = 58, SVG_CY = 57;
+  const tx = cx - SVG_CX * scale;
+  const ty = cy - SVG_CY * scale;
+
+  ctx.save();
+  POLYGONS.forEach((pts, i) => {
+    let row = ROW_ENDS.findIndex(end => i < end);
+    const rowAlpha = baseOpacity * (0.35 + 0.65 * (row / 6));
+    ctx.globalAlpha = rowAlpha;
+    ctx.fillStyle = ROW_COLORS[row];
+    ctx.beginPath();
+    pts.forEach(([px, py], idx) => {
+      const x = px * scale + tx, y = py * scale + ty;
+      idx === 0 ? ctx.moveTo(x, y) : ctx.lineTo(x, y);
+    });
+    ctx.closePath();
+    ctx.fill();
+  });
+  ctx.restore();
+
+  // Thin white outline pass — gives diamond shapes crisp edges
+  ctx.save();
+  ctx.globalAlpha = baseOpacity * 0.25;
+  ctx.strokeStyle = '#ffffff';
+  ctx.lineWidth = 0.8;
+  POLYGONS.forEach(pts => {
+    ctx.beginPath();
+    pts.forEach(([px, py], idx) => {
+      const x = px * scale + tx, y = py * scale + ty;
+      idx === 0 ? ctx.moveTo(x, y) : ctx.lineTo(x, y);
+    });
+    ctx.closePath();
+    ctx.stroke();
+  });
+  ctx.restore();
+}
+
+async function render() {
+  await document.fonts.load('bold 80px "Playfair Display"');
+  await document.fonts.load('italic bold 80px "Playfair Display"');
+
+  const canvas = document.getElementById('c');
+  const ctx = canvas.getContext('2d');
+  const W = 1200, H = 630;
+
+  // 1. Background gradient — deep maroon left, rose-maroon right
+  const bg = ctx.createLinearGradient(0, 0, W, H);
+  bg.addColorStop(0,   '#2E0912');
+  bg.addColorStop(0.45,'#5C1524');
+  bg.addColorStop(1,   '#8B2A3D');
+  ctx.fillStyle = bg;
+  ctx.fillRect(0, 0, W, H);
+
+  // 2. Vignette top-left (darkens corner behind text for contrast)
+  const vign = ctx.createRadialGradient(0, 0, 0, 0, 0, 700);
+  vign.addColorStop(0,   'rgba(0,0,0,0.45)');
+  vign.addColorStop(0.6, 'rgba(0,0,0,0.0)');
+  ctx.fillStyle = vign;
+  ctx.fillRect(0, 0, W, H);
+
+  // 3. Diamond mark — right side, large, watermark treatment
+  drawMark(ctx, 880, 315, 3.8, 0.55);
+
+  // 4. Soft right-panel glow (maroon on maroon — gives depth behind mark)
+  const glow = ctx.createRadialGradient(920, 315, 60, 920, 315, 380);
+  glow.addColorStop(0,   'rgba(180,70,100,0.18)');
+  glow.addColorStop(1,   'rgba(0,0,0,0)');
+  ctx.fillStyle = glow;
+  ctx.fillRect(0, 0, W, H);
+
+  // 5. Vertical rose accent bar
+  const barGrad = ctx.createLinearGradient(0, 155, 0, 470);
+  barGrad.addColorStop(0,   'rgba(196,96,122,0)');
+  barGrad.addColorStop(0.2, '#C4607A');
+  barGrad.addColorStop(0.8, '#C4607A');
+  barGrad.addColorStop(1,   'rgba(196,96,122,0)');
+  ctx.fillStyle = barGrad;
+  ctx.fillRect(88, 155, 3, 315);
+
+  // 6. Eyebrow — spaced caps
+  ctx.font = '500 13px -apple-system, Helvetica, Arial, sans-serif';
+  ctx.fillStyle = 'rgba(255,255,255,0.48)';
+  ctx.fillText('ADVISORY  ·  FINANCE  ·  GROWTH', 108, 188);
+
+  // 7. Main wordmark
+  ctx.font = 'bold 86px "Playfair Display", Georgia, serif';
+  ctx.fillStyle = '#FFFFFF';
+  ctx.fillText('Augere', 108, 300);
+
+  ctx.font = 'italic bold 86px "Playfair Display", Georgia, serif';
+  ctx.fillStyle = 'rgba(255,255,255,0.90)';
+  ctx.fillText('Global.', 108, 396);
+
+  // 8. Fade-out divider line
+  const line = ctx.createLinearGradient(108, 0, 660, 0);
+  line.addColorStop(0,   '#C4607A');
+  line.addColorStop(0.75,'rgba(196,96,122,0.3)');
+  line.addColorStop(1,   'rgba(196,96,122,0)');
+  ctx.strokeStyle = line;
+  ctx.lineWidth = 1.5;
+  ctx.beginPath();
+  ctx.moveTo(108, 424);
+  ctx.lineTo(660, 424);
+  ctx.stroke();
+
+  // 9. Services line
+  ctx.font = '400 21px "Playfair Display", Georgia, serif';
+  ctx.fillStyle = 'rgba(255,255,255,0.78)';
+  ctx.fillText('Capital Raising  ·  Deal Origination  ·  CX Advisory', 108, 460);
+
+  // 10. Regions
+  ctx.font = '500 13px -apple-system, Helvetica, Arial, sans-serif';
+  ctx.fillStyle = 'rgba(255,255,255,0.42)';
+  ctx.fillText('A F R I C A   ·   G U L F   ·   A S I A', 108, 498);
+
+  // 11. URL — bottom right
+  ctx.font = '400 13px -apple-system, Helvetica, Arial, sans-serif';
+  ctx.fillStyle = 'rgba(255,255,255,0.32)';
+  ctx.textAlign = 'right';
+  ctx.fillText('augereglobal.com', W - 56, H - 38);
+
+  window._ogDataURL = canvas.toDataURL('image/jpeg', 0.93);
+  document.title = 'OG Image Ready';
+}
+
+render().catch(console.error);
+</script>
+</body>
+</html>
