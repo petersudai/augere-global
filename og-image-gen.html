@@ -142,7 +142,29 @@ async function render() {
   ctx.fillStyle = 'rgba(255,255,255,0.42)';
   ctx.fillText('A F R I C A   ·   G U L F   ·   A S I A', 108, 498);
 
-  // 11. URL — bottom right
+  // 11. CTA pill
+  (function() {
+    const px = 108, py = 534, pw = 252, ph = 44, pr = 22;
+    ctx.beginPath();
+    ctx.moveTo(px + pr, py);
+    ctx.lineTo(px + pw - pr, py);
+    ctx.arcTo(px + pw, py, px + pw, py + pr, pr);
+    ctx.lineTo(px + pw, py + ph - pr);
+    ctx.arcTo(px + pw, py + ph, px + pw - pr, py + ph, pr);
+    ctx.lineTo(px + pr, py + ph);
+    ctx.arcTo(px, py + ph, px, py + ph - pr, pr);
+    ctx.lineTo(px, py + pr);
+    ctx.arcTo(px, py, px + pr, py, pr);
+    ctx.closePath();
+    ctx.fillStyle = '#C4607A';
+    ctx.fill();
+    ctx.font = 'bold 15px -apple-system, Helvetica, Arial, sans-serif';
+    ctx.fillStyle = '#FFFFFF';
+    ctx.textAlign = 'left';
+    ctx.fillText('Book a Discovery Call  →', 128, 561);
+  })();
+
+  // 12. URL — bottom right
   ctx.font = '400 13px -apple-system, Helvetica, Arial, sans-serif';
   ctx.fillStyle = 'rgba(255,255,255,0.32)';
   ctx.textAlign = 'right';
